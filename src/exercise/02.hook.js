@@ -20,7 +20,7 @@ function stateReducer(state, action) {
   }
 }
 
-export const useAsync = (asyncCallback, initialState, depsList) => {
+export const useAsync = (asyncCallback, initialState) => {
   const [state, dispatch] = React.useReducer(stateReducer, {
     status: 'idle',
     // 🐨 this will need to be "data" instead of "pokemon"
@@ -51,6 +51,6 @@ export const useAsync = (asyncCallback, initialState, depsList) => {
     // 🐨 you'll accept dependencies as an array and pass that here.
     // 🐨 because of limitations with ESLint, you'll need to ignore
     // the react-hooks/exhaustive-deps rule. We'll fix this in an extra credit.
-  }, depsList)
+  }, [asyncCallback])
   return state
 }
