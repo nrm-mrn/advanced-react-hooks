@@ -20,7 +20,7 @@ function stateReducer(state, action) {
   }
 }
 
-export const useAsync = (asyncCallback, initialState) => {
+export const useAsync = initialState => {
   const [state, dispatch] = React.useReducer(stateReducer, {
     status: 'idle',
     // 🐨 this will need to be "data" instead of "pokemon"
@@ -29,28 +29,15 @@ export const useAsync = (asyncCallback, initialState) => {
     ...initialState,
   })
 
-  React.useEffect(() => {
-    // 💰 this first early-exit bit is a little tricky, so let me give you a hint:
-    // const promise = asyncCallback()
-    // if (!promise) {
-    //   return
-    // }
-    // then you can dispatch and handle the promise etc...
-    const promise = asyncCallback()
-    if (!promise) {
-      return
-    } else {
-      dispatch({type: 'pending'})
-      promise.then(
-        data => dispatch({type: 'resolved', data}),
-        error => {
-          dispatch({type: 'rejected', error})
-        },
-      )
-    }
-    // 🐨 you'll accept dependencies as an array and pass that here.
-    // 🐨 because of limitations with ESLint, you'll need to ignore
-    // the react-hooks/exhaustive-deps rule. We'll fix this in an extra credit.
-  }, [asyncCallback])
-  return state
+  const run = React.useCallback(promise => {
+    dispatch({type: 'pending'})
+    promise.then(
+      data => dispatch({type: 'resolved', data}),
+      error => {
+        dispatch({type: 'rejected', error})
+      },
+    )
+  }, [])
+
+  return {...state, run}
 }

@@ -12,20 +12,18 @@ import {
 import {useAsync} from './02.hook'
 
 function PokemonInfo({pokemonName}) {
-  const cb = React.useCallback(() => {
-    if (!pokemonName) {
-      return
-    } else {
-      return fetchPokemon(pokemonName)
-    }
-  }, [pokemonName])
-
-  const state = useAsync(cb, {
+  const {data, status, error, run} = useAsync({
     status: pokemonName ? 'pending' : 'idle',
     data: null,
     error: null,
   })
-  const {data, status, error} = state
+
+  React.useEffect(() => {
+    if (!pokemonName) {
+      return
+    }
+    return run(fetchPokemon(pokemonName))
+  }, [pokemonName, run])
 
   switch (status) {
     case 'idle':
