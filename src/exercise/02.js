@@ -19,10 +19,16 @@ function PokemonInfo({pokemonName}) {
   })
 
   React.useEffect(() => {
+    const controller = new AbortController()
+    const signal = controller.signal
+
     if (!pokemonName) {
       return
     }
-    run(fetchPokemon(pokemonName))
+    run(fetchPokemon(pokemonName, signal))
+    return () => {
+      controller.abort()
+    }
   }, [pokemonName, run])
 
   switch (status) {
